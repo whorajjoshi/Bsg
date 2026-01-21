@@ -10,10 +10,9 @@
 <style>
 *{box-sizing:border-box}
 body{
+  margin:0;
   font-family:Poppins,sans-serif;
   background:linear-gradient(135deg,#0b3d2e,#145a44);
-  margin:0;
-  padding:0;
 }
 .container{
   max-width:420px;
@@ -59,43 +58,7 @@ button{
   border-radius:10px;
   cursor:pointer;
 }
-button:disabled{
-  background:#999;
-}
-#status{
-  margin-top:15px;
-  text-align:center;
-  font-weight:600;
-  font-size:14px;
-}
-.success-card{
-  margin-top:15px;
-  padding:15px;
-  border-radius:12px;
-  background:#eafaf1;
-  border:1px solid #b6e3c7;
-}
-.success-card a{
-  display:block;
-  margin-top:10px;
-  text-decoration:none;
-  background:#0b3d2e;
-  color:#fff;
-  padding:10px;
-  border-radius:8px;
-}
-.whatsapp{
-  margin-top:10px;
-  text-align:center;
-}
-.whatsapp a{
-  display:inline-block;
-  background:#25d366;
-  color:#fff;
-  padding:10px 14px;
-  border-radius:8px;
-  text-decoration:none;
-}
+button:disabled{background:#999}
 .loader{
   display:none;
   text-align:center;
@@ -113,6 +76,29 @@ button:disabled{
 @keyframes bounce{
   0%,80%,100%{transform:scale(0)}
   40%{transform:scale(1)}
+}
+#status{
+  margin-top:15px;
+  text-align:center;
+  font-weight:600;
+}
+.success-card{
+  background:#eafaf1;
+  border:1px solid #b6e3c7;
+  padding:15px;
+  border-radius:12px;
+}
+.success-card a{
+  display:block;
+  margin-top:10px;
+  background:#0b3d2e;
+  color:#fff;
+  padding:10px;
+  border-radius:8px;
+  text-decoration:none;
+}
+.whatsapp a{
+  background:#25d366;
 }
 footer{
   text-align:center;
@@ -152,7 +138,7 @@ footer{
     <label>Mobile Number</label>
     <input type="tel" id="mobile" pattern="[0-9]{10}" required>
 
-    <label>Upload Release Order (JPG / PNG / PDF, Max 2MB)</label>
+    <label>Upload Release Order (JPG / PNG / PDF – Max 2MB)</label>
     <input type="file" id="file" accept=".jpg,.jpeg,.png,.pdf" required>
 
     <button id="submitBtn">Submit Release Order</button>
@@ -170,20 +156,22 @@ footer{
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgKM1LPLLjRf-eGX6hGTSHxICDs7KLg_Uf9NWzTJspkRIbvWA-n0Cn1SBTzk9HR5Dv/exec";
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbwgKM1LPLLjRf-eGX6hGTSHxICDs7KLg_Uf9NWzTJspkRIbvWA-n0Cn1SBTzk9HR5Dv/exec";
 
 const form = document.getElementById("releaseForm");
-const statusBox = document.getElementById("status");
 const loader = document.getElementById("loader");
+const statusBox = document.getElementById("status");
 const btn = document.getElementById("submitBtn");
 
 form.addEventListener("submit",function(e){
   e.preventDefault();
 
   const file = fileInput.files[0];
-  if(file.size > 2*1024*1024) return alert("File size max 2MB");
+  if(!file) return alert("Select file");
+  if(file.size > 2*1024*1024) return alert("Max file size 2MB");
   if(!["image/jpeg","image/png","application/pdf"].includes(file.type))
-    return alert("Only JPG, PNG or PDF allowed");
+    return alert("Only JPG, PNG, PDF allowed");
 
   btn.disabled = true;
   loader.style.display="block";
@@ -191,7 +179,7 @@ form.addEventListener("submit",function(e){
 
   const reader = new FileReader();
   reader.onload = function(){
-    const data = {
+    const payload = {
       campDate: campDate.value,
       name: name.value,
       school: school.value,
@@ -202,7 +190,7 @@ form.addEventListener("submit",function(e){
 
     fetch(SCRIPT_URL,{
       method:"POST",
-      body:JSON.stringify(data)
+      body:JSON.stringify(payload)
     })
     .then(r=>r.json())
     .then(res=>{
@@ -219,19 +207,21 @@ form.addEventListener("submit",function(e){
 
       statusBox.innerHTML=`
         <div class="success-card">
-          ✅ Submitted Successfully<br><br>
+          ✅ Release Order Submitted<br><br>
           <b>Confirmation No:</b> ${res.confirmation}
           <a href="${res.pdfUrl}" target="_blank">📄 Download PDF Receipt</a>
-          <div class="whatsapp">
-            <a target="_blank" href="https://wa.me/91${mobile.value}?text=${encodeURIComponent(
-              `Bharat Scout & Guide – Dungarpur
+          <a class="whatsapp" target="_blank"
+            href="https://wa.me/919610841436?text=${encodeURIComponent(
+`Bharat Scout & Guide – Dungarpur
 Release Order Submitted
 
 Name: ${name.value}
-Camp: ${campDate.value}
-Confirmation No: ${res.confirmation}`
-            )}">📲 Send on WhatsApp</a>
-          </div>
+School: ${school.value}
+Camp Date: ${campDate.value}
+Mobile: ${mobile.value}
+Confirmation No: ${res.confirmation}`)}">
+            📲 Send Confirmation on WhatsApp
+          </a>
         </div>
       `;
       form.reset();
