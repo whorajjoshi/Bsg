@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bharat Scout & Guide | District Dungarpur</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#eef5ee;
+}
+.container{
+  max-width:430px;
+  margin:auto;
+  padding:14px;
+}
+.header{
+  background:#1b5e20;
+  color:#fff;
+  padding:18px;
+  border-radius:14px;
+  text-align:center;
+}
+.header h2{margin:4px 0}
+.header p{margin:0;font-size:14px}
+
+.notice{
+  background:#fff8e1;
+  border-left:5px solid #f9a825;
+  padding:12px;
+  margin-top:12px;
+  border-radius:8px;
+  font-size:13px;
+}
+
+.form-box{
+  background:#fff;
+  margin-top:14px;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+
+label{
+  font-weight:600;
+  margin-top:12px;
+  display:block;
+}
+input,select{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:15px;
+}
+
+.upload-btn{
+  background:#2e7d32;
+  color:#fff;
+  padding:12px;
+  width:100%;
+  border:none;
+  border-radius:10px;
+  margin-top:10px;
+  font-size:15px;
+}
+
+.preview{
+  margin-top:10px;
+  display:none;
+}
+.preview img{
+  width:100%;
+  border-radius:8px;
+  margin-top:5px;
+}
+
+.submit-btn{
+  background:#1b5e20;
+  color:#fff;
+  width:100%;
+  padding:14px;
+  font-size:16px;
+  border:none;
+  border-radius:14px;
+  margin-top:18px;
+}
+
+.loading{
+  display:none;
+  text-align:center;
+  margin-top:10px;
+  font-size:14px;
+  color:#555;
+}
+
+.receipt{
+  display:none;
+  background:#ffffff;
+  padding:25px;
+  border-radius:16px;
+  text-align:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+.receipt h3{
+  color:#2e7d32;
+  margin-bottom:8px;
+}
+.receipt .conf{
+  font-size:18px;
+  font-weight:bold;
+  margin:10px 0;
+}
+
+.footer{
+  text-align:center;
+  font-size:12px;
+  color:#555;
+  margin-top:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h2>Bharat Scout & Guide</h2>
+    <p>District Office – Dungarpur (Rajasthan)</p>
+  </div>
+
+  <div class="notice">
+    🔔 Only officially issued Release Orders will be accepted.  
+    Blurred or incomplete documents may be rejected.
+  </div>
+
+  <div class="form-box" id="formBox">
+
+    <label>Camp Date *</label>
+    <select id="campDate">
+      <option value="">Select Camp Date</option>
+      <option>10–12 Feb 2026</option>
+      <option>15–17 Feb 2026</option>
+      <option>20–22 Feb 2026</option>
+    </select>
+
+    <label>Full Name *</label>
+    <input type="text" id="name" placeholder="Enter full name">
+
+    <label>Posting School Name *</label>
+    <input type="text" id="school" placeholder="School name">
+
+    <label>Mobile Number *</label>
+    <input type="tel" id="mobile" placeholder="10 digit mobile">
+
+    <label>Release Order *</label>
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+
+    <button class="upload-btn" onclick="fileInput.click()">📁 Upload Order</button>
+
+    <div class="preview" id="preview">
+      <small><b>Selected File:</b> <span id="fileName"></span></small>
+      <img id="imgPreview">
+    </div>
+
+    <button class="submit-btn" onclick="submitForm()">Submit Form</button>
+    <div class="loading" id="loading">Submitting, please wait...</div>
+
+  </div>
+
+  <div class="receipt" id="receipt">
+    <h3>✔ Submission Successful</h3>
+    <p>Your form has been submitted successfully.</p>
+    <div class="conf" id="confNo"></div>
+    <p>Please save this Confirmation Number for future reference.</p>
+  </div>
+
+  <div class="footer">
+    Data is directly received by<br>
+    <b>Bharat Scout & Guide, District Office Dungarpur</b>
+  </div>
+
+</div>
+
+<script>
+const SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_URL";
+let selectedFile=null;
+
+fileInput.onchange = e=>{
+  selectedFile=e.target.files[0];
+  fileName.innerText=selectedFile.name;
+  let reader=new FileReader();
+  reader.onload=()=>imgPreview.src=reader.result;
+  reader.readAsDataURL(selectedFile);
+  preview.style.display="block";
+};
+
+function submitForm(){
+  if(!campDate.value || name.value.length<3 || school.value.length<3 || mobile.value.length!=10 || !selectedFile){
+    alert("Please fill all required fields correctly");
+    return;
+  }
+
+  loading.style.display="block";
+
+  let reader=new FileReader();
+  reader.onloadend=function(){
+    fetch(SCRIPT_URL,{
+      method:"POST",
+      body:JSON.stringify({
+        campDate:campDate.value,
+        name:name.value,
+        school:school.value,
+        mobile:mobile.value,
+        file:reader.result.split(",")[1],
+        fileName:selectedFile.name,
+        fileType:selectedFile.type
+      })
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      formBox.style.display="none";
+      receipt.style.display="block";
+      confNo.innerText=data.confirmation;
+      loading.style.display="none";
+    })
+    .catch(()=>{
+      alert("Submission failed");
+      loading.style.display="none";
+    });
+  };
+  reader.readAsDataURL(selectedFile);
+}
+</script>
+
+</body>
+</html>
