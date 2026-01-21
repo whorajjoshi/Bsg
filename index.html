@@ -3,279 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <title>BSG Release Order</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;font-family:Inter}
-body{margin:0;background:#f2f4f7}
-
-/* HEADER */
-.header{
-  background:linear-gradient(135deg,#0b3d2e,#0f5132,#198754);
-  padding:18px 16px 22px;
-  box-shadow:0 10px 25px rgba(0,0,0,.25);
+body{
+  margin:0;
+  font-family:Inter, sans-serif;
+  background:#0b3d2e;
 }
-.header-inner{
-  max-width:440px;
+.app{
+  max-width:420px;
   margin:auto;
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-.header-logo{
-  width:48px;height:48px;
   background:#fff;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  min-height:100vh;
 }
-.header-logo img{width:30px}
-.header-text h1{
-  margin:0;font-size:16px;font-weight:700;color:#fff
-}
-.header-text p{
-  margin:2px 0 0;font-size:11px;color:#e5f3ee
-}
-
-/* CARD */
-.card{
-  max-width:440px;
-  background:#fff;
-  margin:18px auto;
-  padding:20px;
-  border-radius:22px;
-  box-shadow:0 18px 40px rgba(0,0,0,.18);
-}
-
-/* FORM */
-label{font-size:12px;font-weight:600;color:#6b7280}
-input,select{
-  width:100%;padding:12px 14px;margin:6px 0 14px;
-  border-radius:14px;border:1px solid #d1d5db;
-  background:#f9fafb;font-size:14px
-}
-input:focus,select:focus{
-  outline:none;border-color:#198754;background:#fff
-}
-
-/* FILE */
-.file-box{
-  border:2px dashed #cbd5e1;
-  border-radius:16px;
-  padding:16px;
+header{
+  background:#0b3d2e;
+  color:#fff;
+  padding:18px;
   text-align:center;
-  font-size:13px;
-  color:#64748b;
 }
-
-/* BUTTON */
+header h1{
+  margin:0;
+  font-size:20px;
+}
+.container{
+  padding:18px;
+}
+label{
+  font-size:13px;
+  font-weight:600;
+}
+input,select{
+  width:100%;
+  padding:11px;
+  margin:6px 0 14px;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
 button{
   width:100%;
-  padding:14px;
+  padding:13px;
   border:none;
-  border-radius:16px;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
+  border-radius:12px;
+  background:#0b3d2e;
   color:#fff;
-  background:linear-gradient(135deg,#0b3d2e,#198754);
-  margin-top:8px;
+  font-size:16px;
 }
-
-/* PREVIEW */
-.preview{display:none}
-.preview-card{
-  background:#f9fafb;
-  border-radius:16px;
-  padding:14px;
-  font-size:14px;
+.preview{
+  display:none;
+  text-align:center;
 }
-.preview-card b{color:#0b3d2e}
-.preview-img{
-  width:100%;
+.preview img{
+  max-width:100%;
   border-radius:12px;
-  margin-top:10px;
 }
-.pdf-box{
-  margin-top:10px;
-  padding:12px;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  background:#fff;
+.status{
+  text-align:center;
+  margin-top:12px;
+  font-weight:600;
 }
-
-/* ACTIONS */
-.actions{display:flex;gap:10px;margin-top:12px}
-.back{background:#6b7280}
-
-/* LOADER */
-.loader{
-  display:none;text-align:center;margin-top:15px
-}
-.loader span{
-  width:10px;height:10px;background:#0b3d2e;
-  border-radius:50%;display:inline-block;
-  margin:0 4px;animation:b 1.4s infinite
-}
-.loader span:nth-child(2){animation-delay:.2s}
-.loader span:nth-child(3){animation-delay:.4s}
-@keyframes b{
-  0%,80%,100%{transform:scale(0)}
-  40%{transform:scale(1)}
-}
-
-#status{text-align:center;margin-top:14px;font-weight:600}
-.footer{text-align:center;font-size:11px;color:#6b7280;margin:18px 0}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-inner">
-    <div class="header-logo">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/8/88/Scout_and_Guide_Emblem_of_India.svg">
-    </div>
-    <div class="header-text">
-      <h1>Bharat Scout & Guide</h1>
-      <p>District Office – Dungarpur</p>
-    </div>
-  </div>
-</div>
+<div class="app">
+<header>
+  <h1>Bharat Scout & Guide</h1>
+  <small>Dungarpur – Release Order</small>
+</header>
 
-<!-- CARD -->
-<div class="card">
-
-<!-- FORM -->
-<div id="formScreen">
+<div class="container">
+<form id="form">
   <label>Camp Date</label>
-  <select id="campDate" required></select>
+  <select id="campDate" required>
+    <option value="">Loading...</option>
+  </select>
 
-  <label>Student Name</label>
+  <label>Name</label>
   <input id="name" required>
 
-  <label>School Name</label>
+  <label>School</label>
   <input id="school" required>
 
-  <label>Mobile Number</label>
+  <label>Mobile</label>
   <input id="mobile" pattern="[0-9]{10}" required>
 
-  <label>Upload Release Order</label>
-  <div class="file-box">
-    <input type="file" id="file" accept="image/*,.pdf" required>
+  <label>Upload Order</label>
+  <input type="file" id="file" accept="image/*,.pdf" required>
+
+  <div class="preview" id="previewBox">
+    <p><b>Preview</b></p>
+    <img id="previewImg">
+    <button type="button" onclick="submitForm()">Confirm & Submit</button>
   </div>
 
-  <button onclick="showPreview()">Preview Details</button>
+  <button type="submit">Preview Order</button>
+</form>
+
+<div class="status" id="status"></div>
 </div>
-
-<!-- PREVIEW -->
-<div id="previewScreen" class="preview">
-  <div class="preview-card">
-    <b>Camp Date:</b> <span id="pCamp"></span><br>
-    <b>Name:</b> <span id="pName"></span><br>
-    <b>School:</b> <span id="pSchool"></span><br>
-    <b>Mobile:</b> <span id="pMobile"></span>
-    <div id="filePreview"></div>
-  </div>
-
-  <div class="actions">
-    <button class="back" onclick="backToForm()">Edit</button>
-    <button onclick="submitData()">Confirm & Submit</button>
-  </div>
-
-  <div class="loader" id="loader">
-    <span></span><span></span><span></span>
-  </div>
-
-  <div id="status"></div>
 </div>
-
-</div>
-
-<div class="footer">© Bharat Scout & Guide – Dungarpur</div>
 
 <script>
-const SCRIPT_URL = "PASTE_YOUR_NEW_DEPLOYMENT_URL_HERE";
+const SCRIPT_URL = "PASTE_NEW_DEPLOY_URL";
+const FIXED_WA = "9610841436";
 
-let fileBase64="",fileType="",fileName="";
-
-/* LOAD CAMP DATES */
+// Load camp dates
 fetch(SCRIPT_URL+"?action=campDates")
 .then(r=>r.json())
-.then(list=>{
-  campDate.innerHTML='<option value="">Select Camp Date</option>';
-  list.forEach(d=>campDate.innerHTML+=`<option>${d}</option>`);
+.then(d=>{
+  campDate.innerHTML='<option value="">Select</option>';
+  d.forEach(x=>{
+    let o=document.createElement("option");
+    o.text=o.value=x;
+    campDate.appendChild(o);
+  });
 })
-.catch(()=>alert("Camp dates load failed"));
+.catch(()=>campDate.innerHTML='<option>Load failed</option>');
 
-function showPreview(){
-  const f=file.files[0];
-  if(!f)return alert("Upload file first");
+// Preview
+form.onsubmit=e=>{
+  e.preventDefault();
+  const file=fileInput.files[0];
+};
 
+const fileInput=document.getElementById("file");
+fileInput.onchange=()=>{
+  const f=fileInput.files[0];
+  if(!f.type.includes("image")) return;
+  const r=new FileReader();
+  r.onload=()=>{previewImg.src=r.result;previewBox.style.display="block";}
+  r.readAsDataURL(f);
+};
+
+function submitForm(){
+  status.innerText="Submitting...";
   const r=new FileReader();
   r.onload=()=>{
-    fileBase64=r.result.split(",")[1];
-    fileType=f.type;
-    fileName=f.name;
-
-    pCamp.innerText=campDate.value;
-    pName.innerText=name.value;
-    pSchool.innerText=school.value;
-    pMobile.innerText=mobile.value;
-
-    filePreview.innerHTML="";
-    if(fileType.includes("image")){
-      filePreview.innerHTML=`<img class="preview-img" src="${r.result}">`;
-    }else{
-      filePreview.innerHTML=`<div class="pdf-box">📄 ${fileName}</div>`;
-    }
-
-    formScreen.style.display="none";
-    previewScreen.style.display="block";
+    fetch(SCRIPT_URL,{
+      method:"POST",
+      body:JSON.stringify({
+        campDate:campDate.value,
+        name:name.value,
+        school:school.value,
+        mobile:mobile.value,
+        file:r.result.split(",")[1],
+        fileName:fileInput.files[0].name,
+        fileType:fileInput.files[0].type
+      })
+    }).then(r=>r.json()).then(res=>{
+      status.innerHTML="Submitted ✔<br>Ref: "+res.confirmation;
+      window.open(`https://wa.me/91${FIXED_WA}?text=Release Order Submitted%0ARef:${res.confirmation}`);
+    });
   };
-  r.readAsDataURL(f);
-}
-
-function backToForm(){
-  previewScreen.style.display="none";
-  formScreen.style.display="block";
-}
-
-function submitData(){
-  loader.style.display="block";
-  status.innerHTML="";
-
-  fetch(SCRIPT_URL,{
-    method:"POST",
-    body:JSON.stringify({
-      campDate:campDate.value,
-      name:name.value,
-      school:school.value,
-      mobile:mobile.value,
-      file:fileBase64,
-      fileType:fileType
-    })
-  })
-  .then(r=>r.json())
-  .then(res=>{
-    loader.style.display="none";
-    if(res.status==="success"){
-      status.style.color="green";
-      status.innerHTML=`✅ Submitted<br>Confirmation No:<br><b>${res.confirmation}</b>`;
-    }else{
-      status.style.color="red";
-      status.innerHTML="❌ "+res.message;
-    }
-  })
-  .catch(()=>{
-    loader.style.display="none";
-    status.style.color="red";
-    status.innerHTML="❌ Submission failed";
-  });
+  r.readAsDataURL(fileInput.files[0]);
 }
 </script>
 
