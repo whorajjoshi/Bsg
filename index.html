@@ -8,85 +8,116 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
+*{box-sizing:border-box}
 body{
-  font-family:Poppins, sans-serif;
-  background:#0b3d2e;
+  font-family:Poppins,sans-serif;
+  background:linear-gradient(135deg,#0b3d2e,#145a44);
   margin:0;
+  padding:0;
 }
 .container{
   max-width:420px;
-  margin:30px auto;
+  margin:25px auto;
   background:#fff;
-  border-radius:14px;
+  border-radius:16px;
   padding:20px;
-  box-shadow:0 15px 30px rgba(0,0,0,.3);
+  box-shadow:0 20px 40px rgba(0,0,0,.3);
 }
-.logo{
-  text-align:center;
-}
-.logo img{
-  width:80px;
-}
+.logo{text-align:center}
+.logo img{width:75px}
 h2{
   text-align:center;
   color:#0b3d2e;
-  margin-bottom:5px;
+  margin:10px 0 4px;
 }
-p.sub{
+.sub{
   text-align:center;
   font-size:13px;
   color:#555;
   margin-bottom:20px;
 }
 label{
-  font-weight:600;
   font-size:13px;
+  font-weight:600;
 }
-input, select{
+input,select{
   width:100%;
-  padding:10px;
+  padding:11px;
   margin:6px 0 14px;
   border-radius:8px;
   border:1px solid #ccc;
+  font-size:14px;
 }
-input[type=file]{
-  padding:6px;
-}
+input[type=file]{padding:7px}
 button{
   width:100%;
   background:#0b3d2e;
   color:#fff;
   border:none;
-  padding:12px;
+  padding:13px;
   font-size:16px;
   border-radius:10px;
   cursor:pointer;
 }
-button:hover{
-  background:#145a44;
+button:disabled{
+  background:#999;
 }
 #status{
-  text-align:center;
   margin-top:15px;
+  text-align:center;
   font-weight:600;
+  font-size:14px;
+}
+.success-card{
+  margin-top:15px;
+  padding:15px;
+  border-radius:12px;
+  background:#eafaf1;
+  border:1px solid #b6e3c7;
+}
+.success-card a{
+  display:block;
+  margin-top:10px;
+  text-decoration:none;
+  background:#0b3d2e;
+  color:#fff;
+  padding:10px;
+  border-radius:8px;
 }
 .whatsapp{
-  margin-top:12px;
-  display:none;
+  margin-top:10px;
   text-align:center;
 }
 .whatsapp a{
   display:inline-block;
   background:#25d366;
   color:#fff;
-  padding:10px 15px;
+  padding:10px 14px;
   border-radius:8px;
   text-decoration:none;
+}
+.loader{
+  display:none;
+  text-align:center;
+  margin-top:10px;
+}
+.loader span{
+  display:inline-block;
+  width:8px;height:8px;
+  background:#0b3d2e;
+  border-radius:50%;
+  animation:bounce 1.4s infinite both;
+}
+.loader span:nth-child(2){animation-delay:.2s}
+.loader span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{
+  0%,80%,100%{transform:scale(0)}
+  40%{transform:scale(1)}
 }
 footer{
   text-align:center;
   font-size:11px;
-  margin-top:15px;
+  margin-top:18px;
   color:#777;
 }
 </style>
@@ -103,7 +134,7 @@ footer{
   <p class="sub">District Office – Dungarpur<br>Release Order Submission</p>
 
   <form id="releaseForm">
-    
+
     <label>Camp Date</label>
     <select id="campDate" required>
       <option value="">Select Camp Date</option>
@@ -121,17 +152,17 @@ footer{
     <label>Mobile Number</label>
     <input type="tel" id="mobile" pattern="[0-9]{10}" required>
 
-    <label>Upload Release Order</label>
-    <input type="file" id="file" accept="image/*,.pdf" required>
+    <label>Upload Release Order (JPG / PNG / PDF, Max 2MB)</label>
+    <input type="file" id="file" accept=".jpg,.jpeg,.png,.pdf" required>
 
-    <button type="submit">Submit Release Order</button>
+    <button id="submitBtn">Submit Release Order</button>
   </form>
 
-  <div id="status"></div>
-
-  <div class="whatsapp" id="whatsappBox">
-    <a id="waLink" target="_blank">Send Confirmation on WhatsApp</a>
+  <div class="loader" id="loader">
+    <span></span><span></span><span></span>
   </div>
+
+  <div id="status"></div>
 
   <footer>
     © Bharat Scout & Guide – Dungarpur
@@ -141,51 +172,78 @@ footer{
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgKM1LPLLjRf-eGX6hGTSHxICDs7KLg_Uf9NWzTJspkRIbvWA-n0Cn1SBTzk9HR5Dv/exec";
 
-document.getElementById("releaseForm").addEventListener("submit", function(e){
+const form = document.getElementById("releaseForm");
+const statusBox = document.getElementById("status");
+const loader = document.getElementById("loader");
+const btn = document.getElementById("submitBtn");
+
+form.addEventListener("submit",function(e){
   e.preventDefault();
 
-  const status = document.getElementById("status");
-  status.innerHTML = "Submitting... Please wait";
+  const file = fileInput.files[0];
+  if(file.size > 2*1024*1024) return alert("File size max 2MB");
+  if(!["image/jpeg","image/png","application/pdf"].includes(file.type))
+    return alert("Only JPG, PNG or PDF allowed");
 
-  const fileInput = document.getElementById("file");
+  btn.disabled = true;
+  loader.style.display="block";
+  statusBox.innerHTML="";
+
   const reader = new FileReader();
-
   reader.onload = function(){
-    const base64 = reader.result.split(",")[1];
-
     const data = {
-      campDate: document.getElementById("campDate").value,
-      name: document.getElementById("name").value,
-      school: document.getElementById("school").value,
-      mobile: document.getElementById("mobile").value,
-      file: base64,
-      fileName: fileInput.files[0].name,
-      fileType: fileInput.files[0].type
+      campDate: campDate.value,
+      name: name.value,
+      school: school.value,
+      mobile: mobile.value,
+      file: reader.result.split(",")[1],
+      fileType: file.type
     };
 
-    fetch(SCRIPT_URL, {
+    fetch(SCRIPT_URL,{
       method:"POST",
-      body: JSON.stringify(data)
+      body:JSON.stringify(data)
     })
-    .then(res => res.json())
-    .then(res => {
-      status.style.color="green";
-      status.innerHTML = "Submitted Successfully<br>Confirmation No: <b>"+res.confirmation+"</b>";
+    .then(r=>r.json())
+    .then(res=>{
+      loader.style.display="none";
+      btn.disabled=false;
 
-      const msg = `Bharat Scout & Guide Dungarpur%0ARelease Order Submitted%0AConfirmation No: ${res.confirmation}`;
-      document.getElementById("waLink").href =
-        "https://wa.me/91"+data.mobile+"?text="+msg;
+      if(res.status==="duplicate"){
+        statusBox.style.color="orange";
+        statusBox.innerHTML=res.message;
+        return;
+      }
 
-      document.getElementById("whatsappBox").style.display="block";
-      document.getElementById("releaseForm").reset();
+      if(res.status!=="success") throw res;
+
+      statusBox.innerHTML=`
+        <div class="success-card">
+          ✅ Submitted Successfully<br><br>
+          <b>Confirmation No:</b> ${res.confirmation}
+          <a href="${res.pdfUrl}" target="_blank">📄 Download PDF Receipt</a>
+          <div class="whatsapp">
+            <a target="_blank" href="https://wa.me/91${mobile.value}?text=${encodeURIComponent(
+              `Bharat Scout & Guide – Dungarpur
+Release Order Submitted
+
+Name: ${name.value}
+Camp: ${campDate.value}
+Confirmation No: ${res.confirmation}`
+            )}">📲 Send on WhatsApp</a>
+          </div>
+        </div>
+      `;
+      form.reset();
     })
     .catch(()=>{
-      status.style.color="red";
-      status.innerHTML="Submission failed. Try again.";
+      loader.style.display="none";
+      btn.disabled=false;
+      statusBox.style.color="red";
+      statusBox.innerHTML="Submission failed. Try again.";
     });
   };
-
-  reader.readAsDataURL(fileInput.files[0]);
+  reader.readAsDataURL(file);
 });
 </script>
 
