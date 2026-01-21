@@ -1,0 +1,125 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bharat Scout & Guide | District Dungarpur</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{margin:0;font-family:Arial;background:#eef5ee}
+.container{max-width:430px;margin:auto;padding:14px}
+.header{background:#1b5e20;color:#fff;padding:18px;border-radius:14px;text-align:center}
+.notice{background:#fff8e1;border-left:5px solid #f9a825;padding:12px;margin-top:12px;border-radius:8px;font-size:13px}
+.form-box{background:#fff;margin-top:14px;padding:20px;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+label{font-weight:600;margin-top:12px;display:block}
+input,select{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #ccc}
+.upload-btn,.submit-btn{width:100%;padding:13px;border:none;border-radius:12px;color:#fff;font-size:16px;margin-top:14px}
+.upload-btn{background:#2e7d32}
+.submit-btn{background:#1b5e20}
+.preview{display:none;margin-top:10px}
+.preview img{width:100%;border-radius:8px}
+.receipt{display:none;background:#fff;padding:25px;border-radius:16px;text-align:center}
+.conf{font-size:18px;font-weight:bold;color:#2e7d32}
+.footer{text-align:center;font-size:12px;color:#555;margin-top:12px}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h2>Bharat Scout & Guide</h2>
+    <p>District Office – Dungarpur (Rajasthan)</p>
+  </div>
+
+  <div class="notice">
+    🔔 Only officially issued Release Orders will be accepted.
+  </div>
+
+  <div class="form-box" id="formBox">
+    <label>Camp Date *</label>
+    <select id="campDate">
+      <option value="">Select Camp Date</option>
+      <option>10–12 Feb 2026</option>
+      <option>15–17 Feb 2026</option>
+      <option>20–22 Feb 2026</option>
+    </select>
+
+    <label>Full Name *</label>
+    <input id="name">
+
+    <label>Posting School *</label>
+    <input id="school">
+
+    <label>Mobile *</label>
+    <input id="mobile" maxlength="10">
+
+    <label>Release Order *</label>
+    <input type="file" id="fileInput" accept="image/*" hidden>
+    <button class="upload-btn" onclick="fileInput.click()">📁 Upload Order</button>
+
+    <div class="preview" id="preview">
+      <img id="imgPreview">
+    </div>
+
+    <button class="submit-btn" onclick="submitForm()">Submit Form</button>
+  </div>
+
+  <div class="receipt" id="receipt">
+    <h3>✔ Submission Successful</h3>
+    <div class="conf" id="confNo"></div>
+    <p>WhatsApp confirmation has been prepared.</p>
+  </div>
+
+  <div class="footer">
+    Bharat Scout & Guide, District Dungarpur
+  </div>
+
+</div>
+
+<script>
+const SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_URL";
+let selectedFile;
+
+fileInput.onchange=e=>{
+  selectedFile=e.target.files[0];
+  let r=new FileReader();
+  r.onload=()=>{imgPreview.src=r.result;preview.style.display="block"};
+  r.readAsDataURL(selectedFile);
+};
+
+function submitForm(){
+  if(!selectedFile || mobile.value.length!=10 || !campDate.value){
+    alert("Please fill all details correctly");
+    return;
+  }
+
+  let r=new FileReader();
+  r.onloadend=function(){
+    fetch(SCRIPT_URL,{
+      method:"POST",
+      body:JSON.stringify({
+        campDate:campDate.value,
+        name:name.value,
+        school:school.value,
+        mobile:mobile.value,
+        file:r.result.split(",")[1],
+        fileName:selectedFile.name,
+        fileType:selectedFile.type
+      })
+    })
+    .then(res=>res.json())
+    .then(d=>{
+      formBox.style.display="none";
+      receipt.style.display="block";
+      confNo.innerText=d.confirmation;
+      setTimeout(()=>window.open(d.whatsapp,"_blank"),1500);
+    });
+  };
+  r.readAsDataURL(selectedFile);
+}
+</script>
+
+</body>
+</html>
