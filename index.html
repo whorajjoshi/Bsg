@@ -9,12 +9,9 @@
 
 <style>
 *{box-sizing:border-box;font-family:Inter}
-body{
-  margin:0;
-  background:#f2f4f7;
-}
+body{margin:0;background:#f2f4f7}
 
-/* ===== PREMIUM HEADER ===== */
+/* HEADER */
 .header{
   background:linear-gradient(135deg,#0b3d2e,#0f5132,#198754);
   padding:18px 16px 22px;
@@ -22,38 +19,28 @@ body{
 }
 .header-inner{
   max-width:440px;
-  margin:0 auto;
+  margin:auto;
   display:flex;
   align-items:center;
   gap:14px;
 }
 .header-logo{
-  width:48px;
-  height:48px;
+  width:48px;height:48px;
   background:#fff;
   border-radius:14px;
   display:flex;
   align-items:center;
   justify-content:center;
-  box-shadow:0 4px 10px rgba(0,0,0,.2);
 }
-.header-logo img{
-  width:30px;
-}
+.header-logo img{width:30px}
 .header-text h1{
-  margin:0;
-  font-size:16px;
-  font-weight:700;
-  color:#fff;
-  line-height:1.2;
+  margin:0;font-size:16px;font-weight:700;color:#fff
 }
 .header-text p{
-  margin:2px 0 0;
-  font-size:11px;
-  color:#e5f3ee;
+  margin:2px 0 0;font-size:11px;color:#e5f3ee
 }
 
-/* ===== CARD ===== */
+/* CARD */
 .card{
   max-width:440px;
   background:#fff;
@@ -63,25 +50,15 @@ body{
   box-shadow:0 18px 40px rgba(0,0,0,.18);
 }
 
-/* ===== FORM ===== */
-label{
-  font-size:12px;
-  font-weight:600;
-  color:#6b7280;
-}
+/* FORM */
+label{font-size:12px;font-weight:600;color:#6b7280}
 input,select{
-  width:100%;
-  padding:12px 14px;
-  margin:6px 0 14px;
-  border-radius:14px;
-  border:1px solid #d1d5db;
-  background:#f9fafb;
-  font-size:14px;
+  width:100%;padding:12px 14px;margin:6px 0 14px;
+  border-radius:14px;border:1px solid #d1d5db;
+  background:#f9fafb;font-size:14px
 }
 input:focus,select:focus{
-  outline:none;
-  border-color:#198754;
-  background:#fff;
+  outline:none;border-color:#198754;background:#fff
 }
 
 /* FILE */
@@ -108,8 +85,8 @@ button{
   margin-top:8px;
 }
 
-/* ===== PREVIEW ===== */
-.preview{display:none;}
+/* PREVIEW */
+.preview{display:none}
 .preview-card{
   background:#f9fafb;
   border-radius:16px;
@@ -131,32 +108,17 @@ button{
 }
 
 /* ACTIONS */
-.actions{
-  display:flex;
-  gap:10px;
-  margin-top:12px;
-}
-.back{
-  background:#6b7280;
-}
-.confirm{
-  background:linear-gradient(135deg,#0b3d2e,#198754);
-}
+.actions{display:flex;gap:10px;margin-top:12px}
+.back{background:#6b7280}
 
 /* LOADER */
 .loader{
-  display:none;
-  text-align:center;
-  margin-top:15px;
+  display:none;text-align:center;margin-top:15px
 }
 .loader span{
-  width:10px;
-  height:10px;
-  background:#0b3d2e;
-  border-radius:50%;
-  display:inline-block;
-  margin:0 4px;
-  animation:b 1.4s infinite;
+  width:10px;height:10px;background:#0b3d2e;
+  border-radius:50%;display:inline-block;
+  margin:0 4px;animation:b 1.4s infinite
 }
 .loader span:nth-child(2){animation-delay:.2s}
 .loader span:nth-child(3){animation-delay:.4s}
@@ -165,20 +127,8 @@ button{
   40%{transform:scale(1)}
 }
 
-/* STATUS */
-#status{
-  margin-top:14px;
-  text-align:center;
-  font-weight:600;
-}
-
-/* FOOTER */
-.footer{
-  text-align:center;
-  font-size:11px;
-  color:#6b7280;
-  margin:18px 0;
-}
+#status{text-align:center;margin-top:14px;font-weight:600}
+.footer{text-align:center;font-size:11px;color:#6b7280;margin:18px 0}
 </style>
 </head>
 
@@ -234,7 +184,7 @@ button{
 
   <div class="actions">
     <button class="back" onclick="backToForm()">Edit</button>
-    <button class="confirm" onclick="submitData()">Confirm & Submit</button>
+    <button onclick="submitData()">Confirm & Submit</button>
   </div>
 
   <div class="loader" id="loader">
@@ -246,12 +196,10 @@ button{
 
 </div>
 
-<div class="footer">
-© Bharat Scout & Guide – Dungarpur
-</div>
+<div class="footer">© Bharat Scout & Guide – Dungarpur</div>
 
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwgKM1LPLLjRf-eGX6hGTSHxICDs7KLg_Uf9NWzTJspkRIbvWA-n0Cn1SBTzk9HR5Dv/exec";
+const SCRIPT_URL = "PASTE_YOUR_NEW_DEPLOYMENT_URL_HERE";
 
 let fileBase64="",fileType="",fileName="";
 
@@ -261,7 +209,8 @@ fetch(SCRIPT_URL+"?action=campDates")
 .then(list=>{
   campDate.innerHTML='<option value="">Select Camp Date</option>';
   list.forEach(d=>campDate.innerHTML+=`<option>${d}</option>`);
-});
+})
+.catch(()=>alert("Camp dates load failed"));
 
 function showPreview(){
   const f=file.files[0];
@@ -298,6 +247,7 @@ function backToForm(){
 
 function submitData(){
   loader.style.display="block";
+  status.innerHTML="";
 
   fetch(SCRIPT_URL,{
     method:"POST",
@@ -307,20 +257,24 @@ function submitData(){
       school:school.value,
       mobile:mobile.value,
       file:fileBase64,
-      fileType:fileType,
-      fileName:fileName
+      fileType:fileType
     })
   })
   .then(r=>r.json())
   .then(res=>{
     loader.style.display="none";
-    status.style.color="green";
-    status.innerHTML=`✅ Submitted Successfully<br>Confirmation No: <b>${res.confirmation}</b>`;
+    if(res.status==="success"){
+      status.style.color="green";
+      status.innerHTML=`✅ Submitted<br>Confirmation No:<br><b>${res.confirmation}</b>`;
+    }else{
+      status.style.color="red";
+      status.innerHTML="❌ "+res.message;
+    }
   })
   .catch(()=>{
     loader.style.display="none";
     status.style.color="red";
-    status.innerHTML="Submission failed. Try again.";
+    status.innerHTML="❌ Submission failed";
   });
 }
 </script>
